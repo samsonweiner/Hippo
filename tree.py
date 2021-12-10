@@ -2,11 +2,16 @@ from collections import deque
 import numpy as np
 
 class Node:
-    def __init__(self, name='', edge_len = None, parent = None):
+    def __init__(self, name='', edge_len = 0, parent = None):
         self.name = name
         self.length = edge_len
         self.parent = parent
         self.children = []
+        self.SNVs = []
+        self.CNVs = []
+        self.ancestral_SNVs = []
+        self.ancestral_CNVs = []
+        self.genome = None
 
     def __str__(self):
         if self.name:
@@ -83,6 +88,7 @@ class Node:
             node = return_queue.pop()
             yield node
 
+    #level order traversal, i.e. breadth first search from the root. Does include the root itself.
     def iter_descendants(self):
         nodes = deque()
         nodes.append(self)
@@ -90,8 +96,8 @@ class Node:
         while nodes:
             node = nodes.popleft()
             nodes.extend(node.children)
-            if node != self:
-                yield node
+            #if node != self:
+            yield node
 
     def get_leaves(self):
         return [n for n in self.iter_postorder() if n.is_leaf()]
