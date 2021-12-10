@@ -57,7 +57,7 @@ def get_chrom_proportions(sequence):
 
 def mutate_nucleotide(ref_nuc):
     nucleotides = ['A', 'C', 'G', 'T']
-    nucleotides.remove(ref_nuc)
+    nucleotides.remove(ref_nuc.upper())
     alt_nuc = np.random.choice(nucleotides, 1)[0]
     return alt_nuc
 

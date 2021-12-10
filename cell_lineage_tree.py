@@ -1,3 +1,7 @@
+import numpy as np
+import subprocess
+from tree import Node, Tree
+
 #Tree with random topology by attaching two random leaves. Branch lengths are left undefined.
 def gen_random_topology(m, names = None):
     root = Node()
@@ -42,3 +46,18 @@ def add_branchlen_deviation(tree, shape=1):
     for node in tree.iter_descendants():
         x = np.random.gamma(shape)
         node.length = node.length * x
+
+def call_ms(ms_path, num_cells, out_path):
+    f = open(out_path + '/temp_log', 'w+')
+    call = subprocess.call(['./' + ms_path, str(num_cells), '1', '-T'], stdout=f)
+    f.close()
+    with open(out_path + '/temp_log') as f:
+        line = f.readline()
+        while line[0] != '(':
+            line = f.readline()
+        tree_str = line[:-1]
+
+    call = subprocess.call(['rm', out_path + '/temp_log'])
+    f2 = open(out_path + '/tree.nwk', 'w+')
+    f2.write(tree_str)
+    return tree_str

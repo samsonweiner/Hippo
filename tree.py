@@ -58,10 +58,7 @@ class Node:
         self.sibling.append(sibling)
 
     def init_sequence(self, chrom_seq):
-        if self.is_root():
-            #self.seq_allele0 = copy.deepcopy(chrom_seq)
-            #self.seq_allele1 = copy.deepcopy(chrom_seq)
-            self.sequence = dict(zip(chrom_seq.keys(), map(lambda x: {0: chrom_seq[x], 1: chrom_seq[x]}, chrom_seq.keys())))
+        self.sequence = dict(zip(chrom_seq.keys(), map(lambda x: {0: chrom_seq[x], 1: chrom_seq[x]}, chrom_seq.keys())))
 
     def inheret(self):
         self.sequence = copy.deepcopy(self.parent.sequence)
