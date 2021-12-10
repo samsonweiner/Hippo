@@ -1,5 +1,6 @@
 from collections import deque
 import numpy as np
+import copy
 
 class Node:
     def __init__(self, name='', edge_len = 0, parent = None):
@@ -11,7 +12,7 @@ class Node:
         self.CNVs = []
         self.ancestral_SNVs = []
         self.ancestral_CNVs = []
-        self.genome = None
+        self.sequence = None
 
     def __str__(self):
         if self.name:
@@ -55,6 +56,21 @@ class Node:
 
     def set_sibling(self, sibling):
         self.sibling.append(sibling)
+
+    def init_sequence(self, chrom_seq):
+        if self.is_root():
+            #self.seq_allele0 = copy.deepcopy(chrom_seq)
+            #self.seq_allele1 = copy.deepcopy(chrom_seq)
+            self.sequence = dict(zip(chrom_seq.keys(), map(lambda x: {0: chrom_seq[x], 1: chrom_seq[x]}, chrom_seq.keys())))
+
+    def inheret(self):
+        self.sequence = copy.deepcopy(self.parent.sequence)
+        self.ancestral_SNVs = copy.copy(self.parent.ancestral_SNVs)
+        self.ancestral_CNVs = copy.copy(self.parent.ancestral_CNVs)
+        for mut in self.parent.SNVs:
+            self.ancestral_SNVs.append(mut)
+        for mut in self.parent.CNVs:
+            self.ancestral_CNVs.append(mut)
 
     def is_leaf(self):
         return len(self.children) == 0
@@ -178,48 +194,3 @@ def str_to_newick(newick_str):
                     cur_node = cur_node.parent
     
     return cur_node
-
-#Tree with random topology by attaching two random leaves. Branch lengths are left undefined.
-def gen_random_topology(m, names = None):
-    root = Node()
-    leaves = [root]
-
-    while len(leaves) < m:
-        idx = np.random.randint(0, len(leaves))
-        node = leaves.pop(idx)
-        c1 = node.add_child()
-        c2 = node.add_child()
-        leaves.append(c1)
-        leaves.append(c2)
-    
-    count = 0
-    for n in root.get_leaves():
-        if names:
-            n.name = names[count]
-        else:
-            n.name = 'leaf' + str(count)
-        count += 1
-
-    t = Tree(root=root)
-    return t
-
-# Creates branch lengths so that each leaf is equally distant from the root.
-def add_branchlen_ultrametric(tree):
-    node_max_depths = {}
-    for node in tree.iter_postorder():
-        if node.is_leaf():
-            node_max_depths[node] = 1
-        else:
-            node_max_depths[node] = max([node_max_depths[c] for c in node.children]) + 1
-    
-    tree_length = float(tree.get_tree_height())
-    node_dists = {tree.root: 0.0}
-    for node in tree.iter_descendants():
-        node.length = (tree_length - node_dists[node.parent]) / node_max_depths[node]
-        node_dists[node] = node.length + node_dists[node.parent]
-    
-# Given a tree topology with existing branch lengths, computes branch lengths uniformly with a random deviation proportional to the tree height.
-def add_branchlen_deviation(tree, shape=1):
-    for node in tree.iter_descendants():
-        x = np.random.gamma(shape)
-        node.length = node.length * x

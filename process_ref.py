@@ -15,10 +15,8 @@ def process_ref(ref_path):
                 temp_seq += line
             line = ref.readline().strip('\n')
     chrom_seq[cur_chrom] = temp_seq
-            
-    chrom_len = dict(zip(chrom_seq.keys(), map(lambda x: len(chrom_seq[x]), chrom_seq.keys())))
 
-    return chrom_seq, chrom_len
+    return chrom_seq
 
 
 
