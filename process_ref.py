@@ -1,3 +1,6 @@
+import subprocess
+import os
+
 def process_ref(ref_path):
     chrom_seq = {}
 
@@ -18,6 +21,17 @@ def process_ref(ref_path):
 
     return chrom_seq
 
+def get_chrom_lens(ref_path):
+    index_path = ref_path + '.fai'
+    if not os.path.isfile(index_path):
+        subprocess.call(['samtools', 'faidx', ref_path])
+    run = subprocess.run(['cut', '-f1,2', index_path], check=True, stdout=subprocess.PIPE, universal_newlines=True)
+    lines = run.stdout.strip().split('\n')
+    chrom_lens = {}
+    for line in lines:
+        info = line.split('\t')
+        chrom_lens[info[0]] = int(info[1])
+    return chrom_lens
 
 
 

@@ -68,7 +68,7 @@ def simulate_reads(leaf, mu, disp, region_len, read_len, seq_lens, out_path, wgs
                 #call wgsim
                 temp_forward = out_path + '/temp_forward.fq'
                 temp_backward = out_path + '/temp_backward.fq'
-                run = subprocess.run([wgsim_path, '-h', '-N', str(depth), '-1', str(read_len), '-2', str(read_len), region_fa_path, temp_forward, temp_backward])
+                run = subprocess.run(['./' + wgsim_path, '-h', '-N', str(depth), '-1', str(read_len), '-2', str(read_len), region_fa_path, temp_forward, temp_backward])
 
                 f1 = open(temp_forward, 'r')
                 forw_file.write(f1.read())
