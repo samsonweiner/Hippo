@@ -49,7 +49,7 @@ def add_branchlen_deviation(tree, shape=1):
 
 def call_ms(ms_path, num_cells, out_path):
     f = open(out_path + '/temp_log', 'w+')
-    call = subprocess.call(['./' + ms_path, str(num_cells), '1', '-T'], stdout=f)
+    call = subprocess.call([ms_path, str(num_cells), '1', '-T'], stdout=f)
     f.close()
     with open(out_path + '/temp_log') as f:
         line = f.readline()
