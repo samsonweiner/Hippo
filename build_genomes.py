@@ -65,8 +65,10 @@ def mutate_nucleotide(ref_nuc):
 def create_SNV_event(node, snv_name, chrom_proportions, sequence):
         chrom = np.random.choice(list(chrom_proportions.keys()), 1, p=list(chrom_proportions.values()))[0]
         allele = np.random.binomial(1, 0.5)
-        pos = np.random.randint(len(sequence[chrom][allele]))
-        ref_nuc = sequence[chrom][allele][pos]
+        ref_nuc = ''
+        while ref_nuc.upper() not in ['A', 'C', 'G', 'T']:
+            pos = np.random.randint(len(sequence[chrom][allele]))
+            ref_nuc = sequence[chrom][allele][pos]
         alt_nuc = mutate_nucleotide(ref_nuc)
         node.sequence[chrom][allele] = node.sequence[chrom][allele][:pos] + alt_nuc + node.sequence[chrom][allele][pos+1:]
 
